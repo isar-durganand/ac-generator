@@ -50,12 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Simulation variables
     let animationId = null;
     let angle = 0;
-    let rotationSpeed = 1200; // RPM
+    let rotationSpeed = 400; // RPM
     let magneticField = 1.0; // Tesla
     let coilTurns = 50;
     let coilArea = 100; // cm^2
     let loadResistance = 100; // Ohms
-    let animationSpeed = 1.0;
+    let animationSpeed = 0.1;
     let isRunning = false;
     let time = 0;
     
