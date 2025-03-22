@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AC Generator Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>AC Generator Simulator</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#simulator-tab">Simulator</a></li>
+                <li><a href="#theory-tab">Theory</a></li>
+                <li><a href="#formulas-tab">Formulas</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/Electric_generator" target="_blank">Learn More</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Advanced AC Generator Simulator</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="simulator">Simulator</button>
+            <button class="tab-btn" data-tab="theory">Theory</button>
+            <button class="tab-btn" data-tab="formulas">Formulas</button>
+        </div>
+        
+        <div class="tab-content active" id="simulator-tab">
+            <div class="simulator-container">
+                <div class="control-panel">
+                    <h2>Generator Controls</h2>
+                    <div class="control-group">
+                        <h3>Mechanical Properties</h3>
+                        <div class="control">
+                            <label for="rotation-speed">Rotation Speed (RPM):</label>
+                            <input type="range" id="rotation-speed" min="60" max="3600" value="1200" step="60">
+                            <span id="speed-value">1200</span>
+                        </div>
+                        <div class="control">
+                            <label for="coil-turns">Number of Coil Turns:</label>
+                            <input type="range" id="coil-turns" min="1" max="100" value="50">
+                            <span id="turns-value">50</span>
+                        </div>
+                        <div class="control">
+                            <label for="coil-area">Coil Area (cm²):</label>
+                            <input type="range" id="coil-area" min="10" max="200" value="100">
+                            <span id="area-value">100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>Electrical Properties</h3>
+                        <div class="control">
+                            <label for="magnetic-field">Magnetic Field (T):</label>
+                            <input type="range" id="magnetic-field" min="0.1" max="2" value="1" step="0.1">
+                            <span id="field-value">1.0</span>
+                        </div>
+                        <div class="control">
+                            <label for="load-resistance">Load Resistance (Ω):</label>
+                            <input type="range" id="load-resistance" min="1" max="1000" value="100">
+                            <span id="resistance-value">100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>Visualization Options</h3>
+                        <div class="control checkbox">
+                            <input type="checkbox" id="show-field-lines" checked>
+                            <label for="show-field-lines">Show Magnetic Field Lines</label>
+                        </div>
+                        <div class="control checkbox">
+                            <input type="checkbox" id="show-current-flow" checked>
+                            <label for="show-current-flow">Show Current Flow</label>
+                        </div>
+                        <div class="control checkbox">
+                            <input type="checkbox" id="show-flux-vectors">
+                            <label for="show-flux-vectors">Show Flux Vectors</label>
+                        </div>
+                        <div class="control">
+                            <label for="animation-speed">Animation Speed:</label>
+                            <input type="range" id="animation-speed" min="0.1" max="3" value="1" step="0.1">
+                            <span id="animation-speed-value">1.0</span>x
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="start-btn">Start</button>
+                        <button id="stop-btn" disabled>Stop</button>
+                        <button id="reset-btn">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="simulation-container">
+                    <div class="simulation-area">
+                        <canvas id="generator-canvas" width="550" height="400"></canvas>
+                    </div>
+                    
+                    <div class="output-panel">
+                        <h2>Output Measurements</h2>
+                        <div class="output-tabs">
+                            <button class="output-tab-btn active" data-output-tab="voltage">Voltage</button>
+                            <button class="output-tab-btn" data-output-tab="current">Current</button>
+                            <button class="output-tab-btn" data-output-tab="power">Power</button>
+                        </div>
+                        
+                        <div class="output-display active" id="voltage-display">
+                            <canvas id="voltage-canvas" width="550" height="150"></canvas>
+                        </div>
+                        <div class="output-display" id="current-display">
+                            <canvas id="current-canvas" width="550" height="150"></canvas>
+                        </div>
+                        <div class="output-display" id="power-display">
+                            <canvas id="power-canvas" width="550" height="150"></canvas>
+                        </div>
+                        
+                        <div class="measurements">
+                            <div class="measurement">
+                                <div class="measurement-label">Induced EMF:</div>
+                                <div class="measurement-value"><span id="voltage-value">0.00</span> V</div>
+                            </div>
+                            <div class="measurement">
+                                <div class="measurement-label">Current:</div>
+                                <div class="measurement-value"><span id="current-value">0.00</span> A</div>
+                            </div>
+                            <div class="measurement">
+                                <div class="measurement-label">Frequency:</div>
+                                <div class="measurement-value"><span id="frequency-value">0.00</span> Hz</div>
+                            </div>
+                            <div class="measurement">
+                                <div class="measurement-label">Power Output:</div>
+                                <div class="measurement-value"><span id="power-value">0.00</span> W</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="theory-tab">
+            <h2>AC Generator Theory</h2>
+            
+            <div class="theory-section">
+                <h3>Electromagnetic Induction</h3>
+                <p>An AC generator (alternator) operates based on Faraday's law of electromagnetic induction, which states that a changing magnetic flux through a circuit induces an electromotive force (EMF).</p>
+                <p>The induced EMF is proportional to the rate of change of magnetic flux:</p>
+                <div class="equation">ε = -N × dΦ/dt</div>
+                <p>Where:</p>
+                <ul>
+                    <li>ε is the induced EMF (voltage)</li>
+                    <li>N is the number of turns in the coil</li>
+                    <li>dΦ/dt is the rate of change of magnetic flux over time</li>
+                </ul>
+            </div>
+            
+            <div class="theory-section">
+                <h3>Components and Working</h3>
+                <p>The main components of an AC generator include:</p>
+                <ul>
+                    <li><strong>Rotating Coil (Armature):</strong> A coil of wire that rotates within a magnetic field</li>
+                    <li><strong>Magnetic Field:</strong> Created by permanent magnets or electromagnets (field coils)</li>
+                    <li><strong>Slip Rings:</strong> Circular conducting rings that maintain electrical contact with the rotating coil</li>
+                    <li><strong>Brushes:</strong> Stationary contacts that slide against the slip rings to connect the coil to an external circuit</li>
+                    <li><strong>Shaft and Prime Mover:</strong> Mechanical system that rotates the coil (could be a turbine, engine, etc.)</li>
+                </ul>
+                <p>When the coil rotates in the magnetic field, the magnetic flux through the coil changes continuously. This changing flux induces an alternating EMF in the coil according to Faraday's law.</p>
+            </div>
+            
+            <div class="theory-section">
+                <h3>AC Generation Principles</h3>
+                <p>The key principles behind AC generation include:</p>
+                <ol>
+                    <li><strong>Magnetic Flux Variation:</strong> As the coil rotates, the angle between the magnetic field and the area vector of the coil changes, causing the magnetic flux to vary sinusoidally.</li>
+                    <li><strong>Induced EMF:</strong> The changing flux induces an EMF that follows a sinusoidal pattern.</li>
+                    <li><strong>Frequency Determination:</strong> The frequency of the generated AC is determined by the rotation speed of the coil. One complete rotation produces one cycle of AC.</li>
+                    <li><strong>Voltage Magnitude:</strong> The peak voltage depends on the strength of the magnetic field, the area of the coil, the number of turns, and the rotation speed.</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="formulas-tab">
+            <h2>AC Generator Formulas</h2>
+            
+            <div class="formula-section">
+                <h3>Basic Formulas</h3>
+                
+                <div class="formula-card">
+                    <h4>Faraday's Law of Electromagnetic Induction</h4>
+                    <div class="equation">ε = -N × dΦ/dt</div>
+                    <p>The induced EMF is equal to the negative of the rate of change of magnetic flux times the number of turns.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>Magnetic Flux</h4>
+                    <div class="equation">Φ = B × A × cos(θ)</div>
+                    <p>Where B is the magnetic field strength, A is the area of the coil, and θ is the angle between the magnetic field and the area vector.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>EMF in a Rotating Coil</h4>
+                    <div class="equation">ε = -N × B × A × ω × sin(ωt)</div>
+                    <p>For a coil rotating with angular velocity ω, where t is time.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>Peak EMF</h4>
+                    <div class="equation">ε<sub>peak</sub> = N × B × A × ω</div>
+                    <p>The maximum EMF generated during rotation.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>RMS Value of EMF</h4>
+                    <div class="equation">ε<sub>rms</sub> = ε<sub>peak</sub> / √2</div>
+                    <p>The root mean square value of the alternating EMF.</p>
+                </div>
+            </div>
+            
+            <div class="formula-section">
+                <h3>Derived Formulas</h3>
+                
+                <div class="formula-card">
+                    <h4>Frequency of Generated AC</h4>
+                    <div class="equation">f = n / 60</div>
+                    <p>Where n is the rotation speed in RPM, f is frequency in Hz.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>Angular Velocity</h4>
+                    <div class="equation">ω = 2π × f</div>
+                    <p>Relation between angular velocity and frequency.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>Current in a Resistive Load</h4>
+                    <div class="equation">I = ε / R</div>
+                    <p>Where R is the resistance of the load.</p>
+                </div>
+                
+                <div class="formula-card">
+                    <h4>Power Output</h4>
+                    <div class="equation">P = I² × R = ε² / R</div>
+                    <p>The power delivered to a resistive load.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>AC Generator Simulator</h3>
+                <p>An interactive educational tool for understanding the principles of AC generators and electromagnetic induction.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#simulator-tab">Simulator</a></li>
+                    <li><a href="#theory-tab">Theory</a></li>
+                    <li><a href="#formulas-tab">Formulas</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Additional Resources</h3>
+                <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Electric_generator" target="_blank">Wikipedia: Electric Generators</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Electromagnetic_induction" target="_blank">Electromagnetic Induction</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Faraday%27s_law_of_induction" target="_blank">Faraday's Law</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AC Generator Simulator. Educational purposes only.</p>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='js/simulation.js') }}"></script>
+</body>
+</html> 
